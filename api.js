@@ -6,7 +6,9 @@ const express = require("express");
 const app = express();
 
 const dotenv = require("dotenv");
-dotenv.config();
+if (!process.env.PORT) {
+    dotenv.config();
+}
 
 const { getRunsCollection, getRunByID } = require("./database.js");
 

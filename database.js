@@ -1,6 +1,11 @@
 const { MongoClient, ObjectId } = require("mongodb");
 
-const client = new MongoClient("mongodb://localhost:27017");
+const dotenv = require("dotenv");
+if (!process.env.MONGO_URI) {
+    dotenv.config();
+}
+
+const client = new MongoClient(process.env.MONGO_URI);
 
 let runs;
 
