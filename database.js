@@ -23,13 +23,13 @@ const testDB = async () => {
     runs = db.collection("runs");
 
 
-    await runs.insertOne({
-        userId: randomUUID(),
-        startTime: new Date().toISOString(),
-        durationSec: Math.round((Math.random() * 1000)),
-        distanceMeters: Math.round((Math.random() * 1000)),
-        // paceAvgSecPerKm
-    });
+    // await runs.insertOne({
+    //     userId: randomUUID(),
+    //     startTime: new Date().toISOString(),
+    //     durationSec: Math.round((Math.random() * 1000)),
+    //     distanceMeters: Math.round((Math.random() * 1000)),
+    //     // paceAvgSecPerKm
+    // });
 
     const count = await runs.countDocuments();
     console.log(`${count} runs data stored in database.`)
@@ -47,3 +47,7 @@ testDB()
 
 // await client.close();
 // console.log("Connection closed.");
+
+
+
+module.exports = { connectDB };
