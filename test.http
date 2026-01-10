@@ -1,0 +1,32 @@
+@port = 3000
+
+GET http://localhost:{{port}}/
+
+###
+
+GET http://localhost:{{port}}/runtime
+
+###
+
+GET http://localhost:{{port}}/count
+
+###
+
+GET http://localhost:{{port}}/count/alice
+
+###
+
+GET http://localhost:{{port}}/count/bob
+
+###
+
+PUT http://localhost:{{port}}/count/alice/5
+
+###
+
+PUT http://localhost:{{port}}/count/alice/300
+
+
+###
+
+PATCH http://localhost:{{port}}/count
