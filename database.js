@@ -1,4 +1,4 @@
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const { randomUUID } = require('crypto');
 
 const client = new MongoClient("mongodb://localhost:27017");
@@ -16,7 +16,18 @@ const getRunsCollection = async () => {
         return runs;        
     } catch (error) {
         console.error("Failed to connect to the database.", error);
-        throw error;
+    }
+}
+
+const getRunByID = async (runID) => {
+    try {
+        const selectedRun = await runs.find({
+            _id: new ObjectId(runID)
+        });
+        result = await selectedRun.toArray();
+        return result[0];
+    } catch (error) {
+        console.error("Failed to find run by ID.", error);
     }
 }
 
@@ -42,6 +53,9 @@ const testDB = async () => {
     const all = await runs.find();
     console.log(await all.toArray());
 
+    console.log(await getRunByID('69626cbd2dd5f6fcsdgf0fe4'));
+    console.log(await getRunByID('69625ec86cbd2dd5f6fc0fe4'));
+    
 
     await client.close();
     console.log("Connection closed.");
