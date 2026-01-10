@@ -5,7 +5,7 @@ const client = new MongoClient("mongodb://localhost:27017");
 
 let runs;
 
-const connectDB = async () => {
+const getRunsCollection = async () => {
     try {
         if (!runs) {
             await client.connect();
@@ -55,4 +55,4 @@ testDB()
 
 
 
-module.exports = { connectDB };
+module.exports = { getRunsCollection };
