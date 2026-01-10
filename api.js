@@ -1,26 +1,46 @@
+/* ================================================================================================= */
+/*  IMPORTS                                                                                          */
+/* ================================================================================================= */
+
 const express = require("express");
 const app = express();
 
 const dotenv = require("dotenv");
 dotenv.config();
 
-const { getRunsCollection } = require("./database.js");
+const { getRunsCollection, getRunByID } = require("./database.js");
+
+/* ================================================================================================= */
+/*  VARIABLES                                                                                        */
+/* ================================================================================================= */
 
 const PORT = process.env.PORT;
 
 const serverTimeStart = Date.now();
 
+/* ================================================================================================= */
+/*  REQUESTS                                                                                         */
+/* ================================================================================================= */
+
 app.get("/", (req, res) => {
-  res.sendStatus(501);
+  res.send("Hi there! This is a runners app server.");
 });
 
-app.get("/runtime", (req, res) => {
+app.get("/server-runtime", (req, res) => {
   const serverTimeCurrent = (Date.now() - serverTimeStart) / 1000;
   const serverTimeCurrentRounded = Math.round(serverTimeCurrent * 10) / 10;
   res.send(`Server is running for ${serverTimeCurrentRounded} s.`);
 });
 
-// app.get();
+app.get("/run/:id", async (req, res) => {
+  const runs = await getRunsCollection();
+  const data = await getRunByID(req.params.id);
+  if (data) {
+    res.send(data);
+  } else {
+    res.status(404).send(`No run with ID ${req.params.id} found!`);
+  }
+});
 
 /* ================================================================================================= */
 /*  LISTEN                                                                                           */
