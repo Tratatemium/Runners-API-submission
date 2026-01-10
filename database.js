@@ -6,13 +6,18 @@ const client = new MongoClient("mongodb://localhost:27017");
 let runs;
 
 const connectDB = async () => {
-    if (!runs) {
-        await client.connect();
-        console.log("Connected to database.");
-        const db = client.db("runners-app");
-        runs = db.collection("runs");
+    try {
+        if (!runs) {
+            await client.connect();
+            console.log("Connected to database.");
+            const db = client.db("runners-app");
+            runs = db.collection("runs");
+        }
+        return runs;        
+    } catch (error) {
+        console.error("Failed to connect to the database.", error);
+        throw error;
     }
-    return runs;
 }
 
 const testDB = async () => {
