@@ -65,61 +65,67 @@ app.get("/run/:id", async (req, res) => {
 });
 
 app.put("/new-run", async (req, res) => {
-  if (!req.is("application/json")) {
-    return res
-      .status(415)
-      .send("error: Content-Type must be application/json");
+  try {
+    if (!req.is("application/json")) {
+      return res
+        .status(415)
+        .send("error: Content-Type must be application/json");
+    }
+
+    const { userId, startTime, durationSec, distanceMeters } = req.body;
+
+    if (!userId || !startTime || !durationSec || !distanceMeters) {
+      return res
+        .status(400)
+        .send(
+          "error: Must contain all data: userId, startTime, durationSec, distanceMeters."
+        );
+    }
+
+    if (!isUUID(userId)) {
+      return res
+        .status(400)
+        .send("error: userId must be a valid UUID.");
+    }
+
+    if (!isCorrectISODate(startTime)) {
+      return res
+        .status(400)
+        .send("error: startTime must be a valid date in the ISO 8601 format.");
+    }
+
+    if (isNaN(durationSec) || durationSec <= 0) {
+      return res
+        .status(400)
+        .send("error: durationSec must be a positive number.");
+    }
+
+    if (isNaN(distanceMeters) || distanceMeters <= 0) {
+      return res
+        .status(400)
+        .send("error: distanceMeters must be a positive number.");
+    }
+
+    const newRun = {
+      userId,
+      startTime,
+      durationSec,
+      distanceMeters,
+    };
+    const newRunID = await addNewRun(newRun);
+    if (!newRunID) {
+      return res
+        .status(500)
+        .send("error: Failed to save new run. Try again later.");
+    }
+
+    res.status(201)
+      .send(`New run ID: ${newRunID}`);
+
+  } catch (err) {
+    console.error("Unexpected error in /new-run:", err);
+    return res.sendStatus(500);
   }
-
-  const { userId, startTime, durationSec, distanceMeters } = req.body;
-
-  if (!userId || !startTime || !durationSec || !distanceMeters) {
-    return res
-      .status(400)
-      .send(
-        "error: Must contain all data: userId, startTime, durationSec, distanceMeters."
-      );
-  }
-
-  if (!isUUID(userId)) {
-    return res
-      .status(400)
-      .send("error: userId must be a valid UUID.");
-  }
-
-  if (!isCorrectISODate(startTime)) {
-    return res
-      .status(400)
-      .send("error: startTime must be a valid date in the ISO 8601 format.");
-  }
-
-  if (isNaN(durationSec) || durationSec <= 0) {
-    return res
-      .status(400)
-      .send("error: durationSec must be a positive number.");
-  }
-
-  if (isNaN(distanceMeters) || distanceMeters <= 0) {
-    return res
-      .status(400)
-      .send("error: distanceMeters must be a positive number.");
-  }
-
-  const newRun = {
-    userId,
-    startTime,
-    durationSec,
-    distanceMeters,
-  };
-  const newRunID = await addNewRun(newRun);
-  if (!newRunID) {
-    return res
-      .status(500)
-      .send("error: Failed to save new run. Try again later.");
-  }
-
-  res.status(201)
-    .send(`New run ID: ${newRunID}`);
 });
 
 
