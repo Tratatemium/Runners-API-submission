@@ -108,7 +108,16 @@ app.put("/new-run", async (req, res) => {
     };
     console.log(newRun);
     res.sendStatus(201);
-})
+});
+
+
+app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && "body" in err) {
+        return res
+            .status(400)
+            .send("error: Invalid JSON");
+    }
+});
 
 /* ================================================================================================= */
 /*  LISTEN                                                                                           */
