@@ -5,7 +5,7 @@ const testDB = async () => {
   await client.connect();
   console.log("Connected to database.");
   const db = client.db("runners-app");
-  runs = db.collection("runs");
+  const runs = db.collection("runs");
 
   // await runs.insertOne({
   //     userId: randomUUID(),
