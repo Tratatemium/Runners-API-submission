@@ -11,7 +11,7 @@ if (!process.env.PORT) {
     dotenv.config();
 }
 
-const { getRunsCollection, getRunByID, addNewRun } = require("./database.js");
+const { getRunByID, addNewRun } = require("./database.js");
 
 /* ================================================================================================= */
 /*  VARIABLES                                                                                        */
