@@ -25,6 +25,10 @@ const getRunsCollection = async () => {
 
 const getRunByID = async (runID) => {
   try {
+    if (!ObjectId.isValid(runID)) {
+        console.error("Invalid run ID format provided.")
+        return null;
+    }
     const runs = await getRunsCollection();
     if (!runs) {
       console.error("Runs collection is not initialized.");
@@ -34,9 +38,10 @@ const getRunByID = async (runID) => {
       _id: new ObjectId(runID),
     });
     const result = await selectedRun.toArray();
-    return result[0];
+    return result[0] || null;
   } catch (error) {
     console.error("Failed to find run by ID.", error);
+    return null;
   }
 };
 
