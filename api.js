@@ -35,7 +35,6 @@ app.get("/server-runtime", (req, res) => {
 });
 
 app.get("/run/:id", async (req, res) => {
-  const runs = await getRunsCollection();
   const data = await getRunByID(req.params.id);
   if (data) {
     res.send(data);

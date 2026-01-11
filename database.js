@@ -25,6 +25,11 @@ const getRunsCollection = async () => {
 
 const getRunByID = async (runID) => {
   try {
+    const runs = await getRunsCollection();
+    if (!runs) {
+      console.error("Runs collection is not initialized.");
+      return;
+    }
     const selectedRun = await runs.find({
       _id: new ObjectId(runID),
     });
