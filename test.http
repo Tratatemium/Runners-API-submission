@@ -78,3 +78,27 @@ Content-Type: application/json
   "durationSec": 1550,
   "distanceMeters": 1727
 }
+
+
+### Bad duration
+PUT http://localhost:3000/new-run
+Content-Type: application/json
+
+{
+  "userId": "1d9a8400-07cd-466a-9d13-843a544a5b09",
+  "startTime": "2026-01-11T14:45:44.822Z",
+  "durationSec": "-1455a",
+  "distanceMeters": 1727
+}
+
+
+### Bad distance
+PUT http://localhost:3000/new-run
+Content-Type: application/json
+
+{
+  "userId": "1d9a8400-07cd-466a-9d13-843a544a5b09",
+  "startTime": "2026-01-11T14:45:44.822Z",
+  "durationSec": 1727,
+  "distanceMeters": "-1455a"
+}

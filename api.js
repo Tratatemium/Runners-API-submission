@@ -79,13 +79,25 @@ app.put("/new-run", async (req, res) => {
     if (!isUUID(userId)) {
         return res
             .status(400)
-            .send("error: userId must be a valid UUID" );
+            .send("error: userId must be a valid UUID." );
     }
 
     if (!isCorrectISODate(startTime)) {
         return res
             .status(400)
-            .send("error: startTime must be a valid date in the ISO 8601 format" );
+            .send("error: startTime must be a valid date in the ISO 8601 format." );
+    }
+
+    if (isNaN(durationSec) || durationSec <= 0) {
+        return res
+            .status(400)
+            .send("error: durationSec must be a positive number." );
+    }
+
+    if (isNaN(distanceMeters) || distanceMeters <= 0) {
+        return res
+            .status(400)
+            .send("error: distanceMeters must be a positive number." );
     }
 
     const newRun = {
