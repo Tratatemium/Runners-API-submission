@@ -22,9 +22,19 @@ const PORT = process.env.PORT || 3000;
 const serverTimeStart = Date.now();
 
 const isUUID = (str) => {
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(str);
-}
+};
+
+const isCorrectISODate = (str) => {
+  const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+
+  if (!isoRegex.test(str)) return false;
+
+  const date = new Date(str);
+  return !isNaN(date.getTime());
+};
 
 /* ================================================================================================= */
 /*  REQUESTS                                                                                         */
@@ -59,11 +69,23 @@ app.put("/new-run", async (req, res) => {
     }
 
     const { userId, startTime, durationSec, distanceMeters } = req.body;
+
+    if (!userId || !startTime || !durationSec || !distanceMeters) {
+        return res
+            .status(400)
+            .send("error: Must contain all data: userId, startTime, durationSec, distanceMeters." );
+    }
     
     if (!isUUID(userId)) {
         return res
             .status(400)
             .send("error: userId must be a valid UUID" );
+    }
+
+    if (!isCorrectISODate(startTime)) {
+        return res
+            .status(400)
+            .send("error: startTime must be a valid date in the ISO 8601 format" );
     }
 
     const newRun = {
