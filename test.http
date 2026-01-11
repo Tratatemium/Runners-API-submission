@@ -56,6 +56,18 @@ Content-Type: application/json
 }
 
 
+### Bad JSON
+PUT http://localhost:3000/new-run
+Content-Type: application/json
+
+{
+  "userId": "1d9a8400-07cd-466a-9d13-843a544a5b09",
+  "startTime": "2026-01-11T14:45:44.822Z",
+  "durationSec": 1550da,
+  "distanceMeters": 1727
+}
+
+
 ### Bad userID
 PUT http://localhost:3000/new-run
 Content-Type: application/json
