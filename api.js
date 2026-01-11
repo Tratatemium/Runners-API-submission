@@ -4,6 +4,7 @@
 
 const express = require("express");
 const app = express();
+app.use(express.json());
 
 const dotenv = require("dotenv");
 if (!process.env.PORT) {
@@ -19,6 +20,11 @@ const { getRunsCollection, getRunByID } = require("./database.js");
 const PORT = process.env.PORT || 3000;
 
 const serverTimeStart = Date.now();
+
+const isUUID = (str) => {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(str);
+}
 
 /* ================================================================================================= */
 /*  REQUESTS                                                                                         */
@@ -39,9 +45,36 @@ app.get("/run/:id", async (req, res) => {
   if (data) {
     res.send(data);
   } else {
-    res.status(404).send(`No run with ID ${req.params.id} found!`);
+    res.status(404)
+        .send(`error: No run with ID ${req.params.id} found!`);
   }
 });
+
+app.put("/new-run", async (req, res) => {
+
+    if (!req.is("application/json")) {
+        return res
+            .status(415)
+            .send("error: Content-Type must be application/json" );
+    }
+
+    const { userId, startTime, durationSec, distanceMeters } = req.body;
+    
+    if (!isUUID(userId)) {
+        return res
+            .status(400)
+            .send("error: userId must be a valid UUID" );
+    }
+
+    const newRun = {
+        userId,
+        startTime,
+        durationSec,
+        distanceMeters
+    };
+    console.log(newRun);
+    res.sendStatus(201);
+})
 
 /* ================================================================================================= */
 /*  LISTEN                                                                                           */
