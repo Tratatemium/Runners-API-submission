@@ -5,11 +5,9 @@
 # =================================================================================================
 
 ###
-
 GET http://localhost:{{port}}/
 
-###
-
+### Check server runtime
 GET http://localhost:{{port}}/server-runtime
 
 
@@ -18,17 +16,111 @@ GET http://localhost:{{port}}/server-runtime
 # =================================================================================================
 
 ### correct ID #1
-
 GET http://localhost:{{port}}/run/69625f10c3dfc91345faf311
 
 ### correct ID #2
-
 GET http://localhost:{{port}}/run/69625fd283de3e628cbb0b0b
 
 ### incorrect ID #1
-
 GET http://localhost:{{port}}/run/69625f10c4afc91345faf311
 
 ### incorrect ID #2 (wrong format)
-
 GET http://localhost:{{port}}/run/000000zdg000000000000000000
+
+# =================================================================================================
+#  PUT NEW DATA IN                                                                                        
+# ===========================================================================================
+
+### Good entry
+PUT http://localhost:3000/new-run
+Content-Type: application/json
+
+{
+  "userId": "1d9a8400-07cd-466a-9d13-843a544a5b09",
+  "startTime": "2026-01-11T14:45:44.822Z",
+  "durationSec": 1550,
+  "distanceMeters": 1727
+}
+
+
+### Wrong type
+PUT http://localhost:3000/new-run
+
+
+### Empty JSON
+PUT http://localhost:3000/new-run
+Content-Type: application/json
+
+{
+
+}
+
+### Missing duration
+PUT http://localhost:3000/new-run
+Content-Type: application/json
+
+{
+  "userId": "1d9a8400-07cd-466a-9d13-843a544a5b09",
+  "startTime": "2026-01-11T14:45:44.822Z",
+  "distanceMeters": 1727
+}
+
+
+### Bad JSON
+PUT http://localhost:3000/new-run
+Content-Type: application/json
+
+{
+  "userId": "1d9a8400-07cd-466a-9d13-843a544a5b09",
+  "startTime": "2026-01-11T14:45:44.822Z",
+  "durationSec": 1550da,
+  "distanceMeters": 1727
+}
+
+
+### Bad userID
+PUT http://localhost:3000/new-run
+Content-Type: application/json
+
+{
+  "userId": "fagfgsg5054a6wa6ew1",
+  "startTime": "2026-01-11T14:45:44.822Z",
+  "durationSec": 1550,
+  "distanceMeters": 1727
+}
+
+
+### Bad date
+PUT http://localhost:3000/new-run
+Content-Type: application/json
+
+{
+  "userId": "1d9a8400-07cd-466a-9d13-843a544a5b09",
+  "startTime": "2026-31-11T14:45:44.822Z",
+  "durationSec": 1550,
+  "distanceMeters": 1727
+}
+
+
+### Bad duration
+PUT http://localhost:3000/new-run
+Content-Type: application/json
+
+{
+  "userId": "1d9a8400-07cd-466a-9d13-843a544a5b09",
+  "startTime": "2026-01-11T14:45:44.822Z",
+  "durationSec": "-1455a",
+  "distanceMeters": 1727
+}
+
+
+### Bad distance
+PUT http://localhost:3000/new-run
+Content-Type: application/json
+
+{
+  "userId": "1d9a8400-07cd-466a-9d13-843a544a5b09",
+  "startTime": "2026-01-11T14:45:44.822Z",
+  "durationSec": 1727,
+  "distanceMeters": "-1455a"
+}
