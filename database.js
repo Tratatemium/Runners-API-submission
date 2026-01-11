@@ -28,7 +28,7 @@ const getRunByID = async (runID) => {
     const selectedRun = await runs.find({
       _id: new ObjectId(runID),
     });
-    result = await selectedRun.toArray();
+    const result = await selectedRun.toArray();
     return result[0];
   } catch (error) {
     console.error("Failed to find run by ID.", error);
