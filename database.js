@@ -27,7 +27,7 @@ const getRunByID = async (runID) => {
   try {
 
     if (!ObjectId.isValid(runID)) {
-      console.error("Invalid run ID format provided.")
+      console.error("Invalid run ID format provided.");
       return null;
     }
 
