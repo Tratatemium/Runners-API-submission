@@ -74,7 +74,7 @@ app.put("/new-run", async (req, res) => {
 
     const { userId, startTime, durationSec, distanceMeters } = req.body;
 
-    if (!userId || !startTime || !durationSec || !distanceMeters) {
+    if (!userId || !startTime || durationSec == null || distanceMeters == null) {
       return res
         .status(400)
         .send(
