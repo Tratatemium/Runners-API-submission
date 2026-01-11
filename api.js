@@ -106,6 +106,9 @@ app.put("/new-run", async (req, res) => {
         .send("error: distanceMeters must be a positive number.");
     }
 
+    durationSec = Number(durationSec);
+    distanceMeters = Number(distanceMeters);
+
     const newRun = {
       userId,
       startTime,
