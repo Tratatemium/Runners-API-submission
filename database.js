@@ -1,58 +1,48 @@
-const { MongoClient } = require("mongodb");
-const { randomUUID } = require('crypto');
+const { MongoClient, ObjectId } = require("mongodb");
 
-const client = new MongoClient("mongodb://localhost:27017");
+const dotenv = require("dotenv");
+if (!process.env.MONGO_URI) {
+    dotenv.config();
+}
+
+const client = new MongoClient(process.env.MONGO_URI);
 
 let runs;
 
-const connectDB = async () => {
-    try {
-        if (!runs) {
-            await client.connect();
-            console.log("Connected to database.");
-            const db = client.db("runners-app");
-            runs = db.collection("runs");
-        }
-        return runs;        
-    } catch (error) {
-        console.error("Failed to connect to the database.", error);
-        throw error;
+const getRunsCollection = async () => {
+  try {
+    if (!runs) {
+      await client.connect();
+      console.log("Connected to database.");
+      const db = client.db("runners-app");
+      runs = db.collection("runs");
     }
-}
+    return runs;
+  } catch (error) {
+    console.error("Failed to connect to the database.", error);
+  }
+};
 
-const testDB = async () => {
+const getRunByID = async (runID) => {
+  try {
+    if (!ObjectId.isValid(runID)) {
+        console.error("Invalid run ID format provided.")
+        return null;
+    }
+    const runs = await getRunsCollection();
+    if (!runs) {
+      console.error("Runs collection is not initialized.");
+      return;
+    }
+    const selectedRun = await runs.find({
+      _id: new ObjectId(runID),
+    });
+    const result = await selectedRun.toArray();
+    return result[0] || null;
+  } catch (error) {
+    console.error("Failed to find run by ID.", error);
+    return null;
+  }
+};
 
-    await client.connect();
-    console.log("Connected to database.");
-    const db = client.db("runners-app");
-    runs = db.collection("runs");
-
-
-    // await runs.insertOne({
-    //     userId: randomUUID(),
-    //     startTime: new Date().toISOString(),
-    //     durationSec: Math.round((Math.random() * 1000)),
-    //     distanceMeters: Math.round((Math.random() * 1000)),
-    //     // paceAvgSecPerKm
-    // });
-
-    const count = await runs.countDocuments();
-    console.log(`${count} runs data stored in database.`)
-
-    const all = await runs.find();
-    console.log(await all.toArray());
-
-
-    await client.close();
-    console.log("Connection closed.");
-}
-
-testDB()
-
-
-// await client.close();
-// console.log("Connection closed.");
-
-
-
-module.exports = { connectDB };
+module.exports = { client, getRunsCollection, getRunByID };
