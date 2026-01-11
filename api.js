@@ -11,7 +11,7 @@ if (!process.env.PORT) {
     dotenv.config();
 }
 
-const { getRunsCollection, getRunByID } = require("./database.js");
+const { getRunsCollection, getRunByID, addNewRun } = require("./database.js");
 
 /* ================================================================================================= */
 /*  VARIABLES                                                                                        */
@@ -20,6 +20,10 @@ const { getRunsCollection, getRunByID } = require("./database.js");
 const PORT = process.env.PORT || 3000;
 
 const serverTimeStart = Date.now();
+
+/* ================================================================================================= */
+/*  HELPER FUNCTIONS                                                                                 */
+/* ================================================================================================= */
 
 const isUUID = (str) => {
   const uuidRegex =
@@ -107,8 +111,15 @@ app.put("/new-run", async (req, res) => {
     durationSec,
     distanceMeters,
   };
-  console.log(newRun);
-  res.sendStatus(201);
+  const newRunID = await addNewRun(newRun);
+  if (!newRunID) {
+    return res
+      .status(500)
+      .send("error: Failed to save new run. Try again later.");
+  }
+
+  res.status(201)
+    .send(`New run ID: ${newRunID}`);
 });
 
 
