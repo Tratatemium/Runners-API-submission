@@ -68,38 +68,47 @@ app.get("/run/:id", async (req, res) => {
 /*  PUT NEW RUN                                                                                      */
 /* ================================================================================================= */
 
-const validateRunFields = () => {
+const validateRunFields = ({ userId, startTime, durationSec, distanceMeters }) => {
+
   if (!userId || !startTime || durationSec == null || distanceMeters == null) {
-    return res
-      .status(400)
-      .send(
-        "error: Must contain all data: userId, startTime, durationSec, distanceMeters."
-      );
+    const err = new Error("Must contain all data: userId, startTime, durationSec, distanceMeters.");
+    err.status = 400;
+    throw err;
   }
 
   if (!isUUID(userId)) {
-    return res
-      .status(400)
-      .send("error: userId must be a valid UUID.");
+    const err = new Error("userId must be a valid UUID.");
+    err.status = 400;
+    throw err;
   }
 
   if (!isCorrectISODate(startTime)) {
-    return res
-      .status(400)
-      .send("error: startTime must be a valid date in the ISO 8601 format.");
+    const err = new Error("startTime must be a valid date in the ISO 8601 format.");
+    err.status = 400;
+    throw err;
   }
 
-  if (isNaN(durationSec) || durationSec <= 0) {
-    return res
-      .status(400)
-      .send("error: durationSec must be a positive number.");
+  const durationNormalized = Number(durationSec);
+  const distanceNormalized = Number(distanceMeters);
+
+  if (isNaN(durationNormalized) || durationNormalized <= 0) {
+    const err = new Error("durationSec must be a positive number.");
+    err.status = 400;
+    throw err;
   }
 
-  if (isNaN(distanceMeters) || distanceMeters <= 0) {
-    return res
-      .status(400)
-      .send("error: distanceMeters must be a positive number.");
+  if (isNaN(distanceNormalized) || distanceNormalized <= 0) {
+    const err = new Error("distanceMeters must be a positive number.");
+    err.status = 400;
+    throw err;
   }
+
+  return {
+    userId,
+    startTime,
+    durationSec: durationNormalized,
+    distanceMeters: distanceNormalized
+  };
 };
 
 const parseAndValidateRun = async () => {
@@ -115,12 +124,7 @@ app.put("/new-run", async (req, res) => {
         .send("error: Content-Type must be application/json");
     }
 
-    const { userId, startTime, durationSec, distanceMeters } = req.body;
-
-    
-
-    durationSec = Number(durationSec);
-    distanceMeters = Number(distanceMeters);
+    const { userId, startTime, durationSec, distanceMeters } = req.body;  
 
     const newRun = {
       userId,
