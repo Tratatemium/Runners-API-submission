@@ -11,7 +11,7 @@ if (!process.env.PORT) {
     dotenv.config();
 }
 
-const { getRunByID, addNewRun } = require("./database.js");
+const { getRunByID, addNewRun } = require("../database.js");
 
 /* ================================================================================================= */
 /*  VARIABLES                                                                                        */
@@ -64,6 +64,49 @@ app.get("/run/:id", async (req, res) => {
   }
 });
 
+/* ================================================================================================= */
+/*  PUT NEW RUN                                                                                      */
+/* ================================================================================================= */
+
+const validateRunFields = () => {
+  if (!userId || !startTime || durationSec == null || distanceMeters == null) {
+    return res
+      .status(400)
+      .send(
+        "error: Must contain all data: userId, startTime, durationSec, distanceMeters."
+      );
+  }
+
+  if (!isUUID(userId)) {
+    return res
+      .status(400)
+      .send("error: userId must be a valid UUID.");
+  }
+
+  if (!isCorrectISODate(startTime)) {
+    return res
+      .status(400)
+      .send("error: startTime must be a valid date in the ISO 8601 format.");
+  }
+
+  if (isNaN(durationSec) || durationSec <= 0) {
+    return res
+      .status(400)
+      .send("error: durationSec must be a positive number.");
+  }
+
+  if (isNaN(distanceMeters) || distanceMeters <= 0) {
+    return res
+      .status(400)
+      .send("error: distanceMeters must be a positive number.");
+  }
+};
+
+const parseAndValidateRun = async () => {
+
+};
+
+
 app.put("/new-run", async (req, res) => {
   try {
     if (!req.is("application/json")) {
@@ -74,37 +117,7 @@ app.put("/new-run", async (req, res) => {
 
     const { userId, startTime, durationSec, distanceMeters } = req.body;
 
-    if (!userId || !startTime || durationSec == null || distanceMeters == null) {
-      return res
-        .status(400)
-        .send(
-          "error: Must contain all data: userId, startTime, durationSec, distanceMeters."
-        );
-    }
-
-    if (!isUUID(userId)) {
-      return res
-        .status(400)
-        .send("error: userId must be a valid UUID.");
-    }
-
-    if (!isCorrectISODate(startTime)) {
-      return res
-        .status(400)
-        .send("error: startTime must be a valid date in the ISO 8601 format.");
-    }
-
-    if (isNaN(durationSec) || durationSec <= 0) {
-      return res
-        .status(400)
-        .send("error: durationSec must be a positive number.");
-    }
-
-    if (isNaN(distanceMeters) || distanceMeters <= 0) {
-      return res
-        .status(400)
-        .send("error: distanceMeters must be a positive number.");
-    }
+    
 
     durationSec = Number(durationSec);
     distanceMeters = Number(distanceMeters);
@@ -131,6 +144,9 @@ app.put("/new-run", async (req, res) => {
   }
 });
 
+/* ================================================================================================= */
+/*  MIDDLEWARE                                                                                       */
+/* ================================================================================================= */
 
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && "body" in err) {
