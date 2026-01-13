@@ -1,13 +1,28 @@
-const { MongoClient, ObjectId } = require("mongodb");
+/* ================================================================================================= */
+/*  IMPORTS                                                                                          */
+/* ================================================================================================= */
 
+const { MongoClient, ObjectId } = require("mongodb");
 const dotenv = require("dotenv");
+
+/* ================================================================================================= */
+/*  CONFIGURATION                                                                                    */
+/* ================================================================================================= */
+
 if (!process.env.MONGO_URI) {
     dotenv.config();
 }
 
-const client = new MongoClient(process.env.MONGO_URI);
+/* ================================================================================================= */
+/*  DATABASE CONNECTION                                                                              */
+/* ================================================================================================= */
 
+const client = new MongoClient(process.env.MONGO_URI);
 let runs;
+
+/* ================================================================================================= */
+/*  COLLECTION INITIALIZATION                                                                        */
+/* ================================================================================================= */
 
 const getRunsCollection = async () => {
   try {
@@ -20,12 +35,16 @@ const getRunsCollection = async () => {
     return runs;
   } catch (error) {
     console.error("Failed to connect to the database.", error);
+    throw error;
   }
 };
 
+/* ================================================================================================= */
+/*  DATABASE OPERATIONS                                                                              */
+/* ================================================================================================= */
+
 const getRunByID = async (runID) => {
   try {
-
     if (!ObjectId.isValid(runID)) {
       console.error("Invalid run ID format provided.");
       return null;
@@ -42,7 +61,6 @@ const getRunByID = async (runID) => {
     });
     const result = await selectedRun.toArray();
     return result[0] || null;
-
   } catch (error) {
     console.error("Failed to find run by ID.", error);
     return null;
@@ -58,6 +76,7 @@ const addNewRun = async (runJSON) => {
       err.status = 500;
       throw err;
     }
+
     const result = await runs.insertOne(runJSON);
     if (result.acknowledged) {
       console.log("New run added to the database. ID:", result.insertedId);
@@ -76,4 +95,13 @@ const addNewRun = async (runJSON) => {
   }
 };
 
-module.exports = { client, getRunsCollection, getRunByID, addNewRun };
+/* ================================================================================================= */
+/*  EXPORTS                                                                                          */
+/* ================================================================================================= */
+
+module.exports = { 
+  client, 
+  getRunsCollection, 
+  getRunByID, 
+  addNewRun 
+};
