@@ -11,7 +11,7 @@ if (!process.env.PORT) {
     dotenv.config();
 }
 
-const { getRunByID, addNewRun } = require("./database.js");
+const { getRunByID, addNewRun } = require("../database.js");
 
 /* ================================================================================================= */
 /*  VARIABLES                                                                                        */
@@ -64,73 +64,84 @@ app.get("/run/:id", async (req, res) => {
   }
 });
 
-app.put("/new-run", async (req, res) => {
+/* ================================================================================================= */
+/*  POST NEW RUN                                                                                     */
+/* ================================================================================================= */
+
+const validateRunFields = ({ userId, startTime, durationSec, distanceMeters }) => {
+
+  if (!userId || !startTime || durationSec == null || distanceMeters == null) {
+    const err = new Error("Must contain all data: userId, startTime, durationSec, distanceMeters.");
+    err.status = 400;
+    throw err;
+  }
+
+  if (!isUUID(userId)) {
+    const err = new Error("userId must be a valid UUID.");
+    err.status = 400;
+    throw err;
+  }
+
+  if (!isCorrectISODate(startTime)) {
+    const err = new Error("startTime must be a valid date in the ISO 8601 format.");
+    err.status = 400;
+    throw err;
+  }
+
+  const durationNormalized = Number(durationSec);
+  const distanceNormalized = Number(distanceMeters);
+
+  if (isNaN(durationNormalized) || durationNormalized <= 0) {
+    const err = new Error("durationSec must be a positive number.");
+    err.status = 400;
+    throw err;
+  }
+
+  if (isNaN(distanceNormalized) || distanceNormalized <= 0) {
+    const err = new Error("distanceMeters must be a positive number.");
+    err.status = 400;
+    throw err;
+  }
+
+  return {
+    userId,
+    startTime,
+    durationSec: durationNormalized,
+    distanceMeters: distanceNormalized
+  };
+};
+
+const parseAndValidateRun = (req) => {
+  if (!req.is("json")) {
+    const err = new Error("Content-Type must be application/json.");
+    err.status = 415;
+    throw err;
+  }
+  const { userId, startTime, durationSec, distanceMeters } = req.body;
+  const newRun = validateRunFields({ userId, startTime, durationSec, distanceMeters });
+  return newRun;
+};
+
+
+app.post("/new-run", async (req, res) => {
   try {
-    if (!req.is("application/json")) {
-      return res
-        .status(415)
-        .send("error: Content-Type must be application/json");
-    }
-
-    const { userId, startTime, durationSec, distanceMeters } = req.body;
-
-    if (!userId || !startTime || durationSec == null || distanceMeters == null) {
-      return res
-        .status(400)
-        .send(
-          "error: Must contain all data: userId, startTime, durationSec, distanceMeters."
-        );
-    }
-
-    if (!isUUID(userId)) {
-      return res
-        .status(400)
-        .send("error: userId must be a valid UUID.");
-    }
-
-    if (!isCorrectISODate(startTime)) {
-      return res
-        .status(400)
-        .send("error: startTime must be a valid date in the ISO 8601 format.");
-    }
-
-    if (isNaN(durationSec) || durationSec <= 0) {
-      return res
-        .status(400)
-        .send("error: durationSec must be a positive number.");
-    }
-
-    if (isNaN(distanceMeters) || distanceMeters <= 0) {
-      return res
-        .status(400)
-        .send("error: distanceMeters must be a positive number.");
-    }
-
-    durationSec = Number(durationSec);
-    distanceMeters = Number(distanceMeters);
-
-    const newRun = {
-      userId,
-      startTime,
-      durationSec,
-      distanceMeters,
-    };
+    const newRun = parseAndValidateRun(req);
     const newRunID = await addNewRun(newRun);
-    if (!newRunID) {
-      return res
-        .status(500)
-        .send("error: Failed to save new run. Try again later.");
-    }
-
     res.status(201)
       .send(`New run ID: ${newRunID}`);
 
   } catch (err) {
-    console.error("Unexpected error in /new-run:", err);
-    return res.sendStatus(500);
+    if (!err.status || err.status >= 500) {
+      console.error("Server error in /runs:", err);
+    }
+    res.status(err.status || 500)
+      .send(err.message);
   }
 });
 
+/* ================================================================================================= */
+/*  MIDDLEWARE                                                                                       */
+/* ================================================================================================= */
 
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && "body" in err) {

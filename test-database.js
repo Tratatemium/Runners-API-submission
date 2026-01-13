@@ -29,3 +29,11 @@ const testDB = async () => {
 };
 
 testDB();
+
+try {
+  const err = new Error("Error: pow")
+  err.status = 400;
+  throw err;
+} catch (err) {
+  console.log("bla bla bla" + err.status + err)
+}
