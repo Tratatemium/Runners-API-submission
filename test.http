@@ -16,23 +16,23 @@ GET http://localhost:{{port}}/server-runtime
 # =================================================================================================
 
 ### correct ID #1
-GET http://localhost:{{port}}/run/69625f10c3dfc91345faf311
+GET http://localhost:{{port}}/runs/69625f10c3dfc91345faf311
 
 ### correct ID #2
-GET http://localhost:{{port}}/run/69625fd283de3e628cbb0b0b
+GET http://localhost:{{port}}/runs/69625fd283de3e628cbb0b0b
 
 ### incorrect ID #1
-GET http://localhost:{{port}}/run/69625f10c4afc91345faf311
+GET http://localhost:{{port}}/runs/69625f10c4afc91345faf311
 
 ### incorrect ID #2 (wrong format)
-GET http://localhost:{{port}}/run/000000zdg000000000000000000
+GET http://localhost:{{port}}/runs/000000zdg000000000000000000
 
 # =================================================================================================
 #  POST NEW DATA IN                                                                                        
 # ===========================================================================================
 
 ### Good entry
-POST http://localhost:3000/new-run
+POST http://localhost:3000/runs/new-run
 Content-Type: application/json
 
 {
@@ -44,11 +44,11 @@ Content-Type: application/json
 
 
 ### Wrong type
-POST http://localhost:3000/new-run
+POST http://localhost:3000/runs/new-run
 
 
 ### Empty JSON
-POST http://localhost:3000/new-run
+POST http://localhost:3000/runs/new-run
 Content-Type: application/json
 
 {
@@ -56,7 +56,7 @@ Content-Type: application/json
 }
 
 ### Missing duration
-POST http://localhost:3000/new-run
+POST http://localhost:3000/runs/runs/new-run
 Content-Type: application/json
 
 {
@@ -67,7 +67,7 @@ Content-Type: application/json
 
 
 ### Bad JSON
-POST http://localhost:3000/new-run
+POST http://localhost:3000/runs/new-run
 Content-Type: application/json
 
 {
@@ -79,7 +79,7 @@ Content-Type: application/json
 
 
 ### Bad userID
-POST http://localhost:3000/new-run
+POST http://localhost:3000/runs/new-run
 Content-Type: application/json
 
 {
@@ -91,7 +91,7 @@ Content-Type: application/json
 
 
 ### Bad date
-POST http://localhost:3000/new-run
+POST http://localhost:3000/runs/new-run
 Content-Type: application/json
 
 {
@@ -103,7 +103,7 @@ Content-Type: application/json
 
 
 ### Bad duration
-POST http://localhost:3000/new-run
+POST http://localhost:3000/runs/new-run
 Content-Type: application/json
 
 {
@@ -115,7 +115,7 @@ Content-Type: application/json
 
 
 ### Bad distance
-POST http://localhost:3000/new-run
+POST http://localhost:3000/runs/new-run
 Content-Type: application/json
 
 {
