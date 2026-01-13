@@ -111,27 +111,21 @@ const validateRunFields = ({ userId, startTime, durationSec, distanceMeters }) =
   };
 };
 
-const parseAndValidateRun = async () => {
-
+const parseAndValidateRun = (req) => {
+  if (!req.is("application/json")) {
+    const err = new Error("Content-Type must be application/json.");
+    err.status = 415;
+    throw err;
+  }
+  const { userId, startTime, durationSec, distanceMeters } = req.body;
+  const newRun = validateRunFields(userId, startTime, durationSec, distanceMeters);
+  return newRun;
 };
 
 
 app.put("/new-run", async (req, res) => {
   try {
-    if (!req.is("application/json")) {
-      return res
-        .status(415)
-        .send("error: Content-Type must be application/json");
-    }
-
-    const { userId, startTime, durationSec, distanceMeters } = req.body;  
-
-    const newRun = {
-      userId,
-      startTime,
-      durationSec,
-      distanceMeters,
-    };
+    const newRun = parseAndValidateRun(req);
     const newRunID = await addNewRun(newRun);
     if (!newRunID) {
       return res
