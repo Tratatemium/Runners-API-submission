@@ -123,7 +123,7 @@ const parseAndValidateRun = (req) => {
 };
 
 
-app.put("/new-run", async (req, res) => {
+app.post("/new-run", async (req, res) => {
   try {
     const newRun = parseAndValidateRun(req);
     const newRunID = await addNewRun(newRun);

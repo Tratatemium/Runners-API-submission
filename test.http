@@ -28,11 +28,11 @@ GET http://localhost:{{port}}/run/69625f10c4afc91345faf311
 GET http://localhost:{{port}}/run/000000zdg000000000000000000
 
 # =================================================================================================
-#  PUT NEW DATA IN                                                                                        
+#  POST NEW DATA IN                                                                                        
 # ===========================================================================================
 
 ### Good entry
-PUT http://localhost:3000/new-run
+POST http://localhost:3000/new-run
 Content-Type: application/json
 
 {
@@ -44,11 +44,11 @@ Content-Type: application/json
 
 
 ### Wrong type
-PUT http://localhost:3000/new-run
+POST http://localhost:3000/new-run
 
 
 ### Empty JSON
-PUT http://localhost:3000/new-run
+POST http://localhost:3000/new-run
 Content-Type: application/json
 
 {
@@ -56,7 +56,7 @@ Content-Type: application/json
 }
 
 ### Missing duration
-PUT http://localhost:3000/new-run
+POST http://localhost:3000/new-run
 Content-Type: application/json
 
 {
@@ -67,7 +67,7 @@ Content-Type: application/json
 
 
 ### Bad JSON
-PUT http://localhost:3000/new-run
+POST http://localhost:3000/new-run
 Content-Type: application/json
 
 {
@@ -79,7 +79,7 @@ Content-Type: application/json
 
 
 ### Bad userID
-PUT http://localhost:3000/new-run
+POST http://localhost:3000/new-run
 Content-Type: application/json
 
 {
@@ -91,7 +91,7 @@ Content-Type: application/json
 
 
 ### Bad date
-PUT http://localhost:3000/new-run
+POST http://localhost:3000/new-run
 Content-Type: application/json
 
 {
@@ -103,7 +103,7 @@ Content-Type: application/json
 
 
 ### Bad duration
-PUT http://localhost:3000/new-run
+POST http://localhost:3000/new-run
 Content-Type: application/json
 
 {
@@ -115,7 +115,7 @@ Content-Type: application/json
 
 
 ### Bad distance
-PUT http://localhost:3000/new-run
+POST http://localhost:3000/new-run
 Content-Type: application/json
 
 {
