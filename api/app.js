@@ -4,7 +4,14 @@
 
 const express = require("express");
 const app = express();
+
+const runsGetRoutes = require("./routers/runs.get.routers.js");
+const runsPostRoutes = require("./routers/runs.post.routers.js");
+
 app.use(express.json());
+
+app.use("/runs", runsGetRoutes);
+app.use("/runs", runsPostRoutes);
 
 const { getRunByID, addNewRun } = require("../database.js");
 
@@ -146,4 +153,4 @@ app.use((err, req, res, next) => {
   return next(err);
 });
 
-module.exports = { app };
+module.exports = app;
