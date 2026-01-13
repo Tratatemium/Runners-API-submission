@@ -131,7 +131,9 @@ app.put("/new-run", async (req, res) => {
       .send(`New run ID: ${newRunID}`);
 
   } catch (err) {
-    console.error("Unexpected error in /new-run:", err);
+    if (!err.status || err.status >= 500) {
+      console.error("Server error in /runs:", err);
+    }
     res.status(err.status || 500)
       .send(err.message);
   }
