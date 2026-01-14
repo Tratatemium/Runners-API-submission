@@ -39,27 +39,25 @@ const getRunsCollection = async () => {
 /* ================================================================================================= */
 
 const getRunByID = async (runID) => {
-  try {
-    if (!ObjectId.isValid(runID)) {
-      console.error("Invalid run ID format provided.");
-      return null;
-    }
-
-    const runs = await getRunsCollection();
-    if (!runs) {
-      console.error("Runs collection is not initialized.");
-      return null;
-    }
-
-    const selectedRun = await runs.find({
-      _id: new ObjectId(runID),
-    });
-    const result = await selectedRun.toArray();
-    return result[0] || null;
-  } catch (error) {
-    console.error("Failed to find run by ID.", error);
-    return null;
+  if (!ObjectId.isValid(runID)) {
+    const err = new Error("Invalid run ID format provided. Mus be ObjectID.");
+    err.status = 400;
+    throw err;
   }
+
+  const runs = await getRunsCollection();
+
+  const selectedRun = await runs.find({
+    _id: new ObjectId(runID),
+  });
+  if (!selectedRun) {
+    const err = new Error(`No run with ID ${runID} found!`);
+    err.status = 404;
+    throw err;
+  }
+  const result = await selectedRun.toArray();
+  
+  return result[0] || null;
 };
 
 const addNewRun = async (runJSON) => {
