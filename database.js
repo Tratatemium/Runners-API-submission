@@ -25,18 +25,13 @@ let runs;
 /* ================================================================================================= */
 
 const getRunsCollection = async () => {
-  try {
-    if (!runs) {
-      await client.connect();
-      console.log("Connected to database.");
-      const db = client.db("runners-app");
-      runs = db.collection("runs");
-    }
-    return runs;
-  } catch (error) {
-    console.error("Failed to connect to the database.", error);
-    throw error;
+  if (!runs) {
+    await client.connect();
+    console.log("Connected to database.");
+    const db = client.db("runners-app");
+    runs = db.collection("runs");
   }
+  return runs;
 };
 
 /* ================================================================================================= */
