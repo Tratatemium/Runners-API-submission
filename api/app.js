@@ -12,17 +12,17 @@ const app = express();
 const serverTimeStart = Date.now();
 
 /* ================================================================================================= */
+/*  MIDDLEWARE                                                                                       */
+/* ================================================================================================= */
+
+app.use(express.json());
+
+/* ================================================================================================= */
 /*  ROUTE IMPORTS                                                                                    */
 /* ================================================================================================= */
 
 const runsGetRoutes = require("./routes/runs.get.routes.js");
 const runsPostRoutes = require("./routes/runs.post.routes.js");
-
-/* ================================================================================================= */
-/*  MIDDLEWARE                                                                                       */
-/* ================================================================================================= */
-
-app.use(express.json());
 
 /* ================================================================================================= */
 /*  ROUTES                                                                                           */
@@ -44,16 +44,19 @@ app.use("/runs", runsGetRoutes);
 app.use("/runs", runsPostRoutes);
 
 /* ================================================================================================= */
-/*  ERROR HANDLING MIDDLEWARE                                                                        */
+/*  ERROR HANDLERS                                                                                   */
 /* ================================================================================================= */
 
-app.use((err, req, res, next) => {
-  if (err instanceof SyntaxError && "body" in err) {
-    return res.status(400).send("error: Invalid JSON");
-  }
+const {
+  jsonSyntaxErrorHandler,
+  dbErrorHandler,
+  finalErrorHandler,
+} = require("./middleware/error-handlers.js");
 
-  return next(err);
-});
+app.use(jsonSyntaxErrorHandler);
+app.use(dbErrorHandler);
+app.use(finalErrorHandler);
+
 
 /* ================================================================================================= */
 /*  EXPORTS                                                                                          */
