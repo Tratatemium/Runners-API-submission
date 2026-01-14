@@ -5,6 +5,11 @@
 const express = require("express");
 const app = express();
 
+const {
+  MongoServerSelectionError,
+  MongoNetworkError
+} = require("mongodb");
+
 /* ================================================================================================= */
 /*  SERVER VARIABLES                                                                                 */
 /* ================================================================================================= */
@@ -59,8 +64,20 @@ app.use((err, req, res, next) => {
 // FINAL error handler
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(err.status || 500)
-    .send(err.message || "Internal Server Error.");
+
+  let status = err.status || 500;
+  let message = err.message || "Internal Server Error";
+  
+  if (
+    err instanceof MongoServerSelectionError ||
+    err instanceof MongoNetworkError
+  ) {
+    status = 500;
+    message = "Failed to connect to database."
+  }
+
+  res.status(status)
+    .send(message);
 });
 
 /* ================================================================================================= */

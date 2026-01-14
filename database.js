@@ -57,7 +57,7 @@ const getRunByID = async (runID) => {
   }
   const result = await selectedRun.toArray();
   
-  return result[0] || null;
+  return result[0];
 };
 
 const addNewRun = async (runJSON) => {
