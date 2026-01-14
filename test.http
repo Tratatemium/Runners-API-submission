@@ -56,7 +56,7 @@ Content-Type: application/json
 }
 
 ### Missing duration
-POST http://localhost:3000/runs/runs/new-run
+POST http://localhost:3000/runs/new-run
 Content-Type: application/json
 
 {
