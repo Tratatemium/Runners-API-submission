@@ -59,31 +59,16 @@ const getRunByID = async (runID) => {
 };
 
 const addNewRun = async (runJSON) => {
-  try {
-    const runs = await getRunsCollection();
-    if (!runs) {
-      console.error("Runs collection is not initialized.");
-      const err = new Error("Failed to save new run. Try again later.");
-      err.status = 500;
-      throw err;
-    }
+  const runs = await getRunsCollection();
 
-    const result = await runs.insertOne(runJSON);
-    if (result.acknowledged) {
-      console.log("New run added to the database. ID:", result.insertedId);
-      return result.insertedId;
-    } else {
-      console.error("Run insertion failed.");
-      const err = new Error("Failed to save new run. Try again later.");
-      err.status = 500;
-      throw err;
-    }
-  } catch (error) {
-    console.error("Failed to add new run to the database.", error);
-    const err = new Error("Failed to save new run. Try again later.");
+  const result = await runs.insertOne(runJSON);
+  if (!result.acknowledged) {
+    const err = new Error("Failed to save new run.");
     err.status = 500;
     throw err;
   }
+  console.log("New run added to the database. ID:", result.insertedId);
+  return result.insertedId;
 };
 
 /* ================================================================================================= */
