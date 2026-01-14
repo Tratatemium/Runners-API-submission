@@ -34,7 +34,7 @@ const validateRunFields = ({
 }) => {
   if (!userId || !startTime || durationSec == null || distanceMeters == null) {
     const err = new Error(
-      "Must contain all data: userId, startTime, durationSec, distanceMeters."
+      "The request body must include all required fields: userId, startTime, durationSec, distanceMeters.."
     );
     err.status = 400;
     throw err;
@@ -94,16 +94,9 @@ const parseAndValidateRun = (req) => {
 };
 
 router.post("/new-run", async (req, res) => {
-  try {
-    const newRun = parseAndValidateRun(req);
-    const newRunID = await addNewRun(newRun);
-    res.status(201).send(`New run ID: ${newRunID}`);
-  } catch (err) {
-    if (!err.status || err.status >= 500) {
-      console.error("Server error in /runs:", err);
-    }
-    res.status(err.status || 500).send(err.message);
-  }
+  const newRun = parseAndValidateRun(req);
+  const newRunID = await addNewRun(newRun);
+  res.status(201).send(`New run ID: ${newRunID}`);
 });
 
 module.exports = router;
