@@ -34,7 +34,7 @@ const validateRunFields = ({
 }) => {
   if (!userId || !startTime || durationSec == null || distanceMeters == null) {
     const err = new Error(
-      "The request body must include all required fields: userId, startTime, durationSec, distanceMeters.."
+      "The request body must include all required fields: userId, startTime, durationSec, distanceMeters."
     );
     err.status = 400;
     throw err;

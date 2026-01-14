@@ -10,7 +10,7 @@ const dotenv = require("dotenv");
 /* ================================================================================================= */
 
 if (!process.env.MONGO_URI) {
-    dotenv.config();
+  dotenv.config();
 }
 
 /* ================================================================================================= */
@@ -40,7 +40,9 @@ const getRunsCollection = async () => {
 
 const getRunByID = async (runID) => {
   if (!ObjectId.isValid(runID)) {
-    const err = new Error("Invalid run ID format provided. It must be ObjectID.");
+    const err = new Error(
+      "Invalid run ID format provided. It must be ObjectID."
+    );
     err.status = 400;
     throw err;
   }
@@ -54,7 +56,7 @@ const getRunByID = async (runID) => {
     const err = new Error(`No run with ID ${runID} found!`);
     err.status = 404;
     throw err;
-  }  
+  }
   return selectedRun;
 };
 
@@ -75,9 +77,9 @@ const addNewRun = async (runJSON) => {
 /*  EXPORTS                                                                                          */
 /* ================================================================================================= */
 
-module.exports = { 
-  client, 
-  getRunsCollection, 
-  getRunByID, 
-  addNewRun 
+module.exports = {
+  client,
+  getRunsCollection,
+  getRunByID,
+  addNewRun,
 };
