@@ -14,25 +14,21 @@ if (!process.env.MONGO_URI) {
 }
 
 /* ================================================================================================= */
-/*  DATABASE CONNECTION                                                                              */
+/*  DATABASE INITIALIZATION                                                                          */
 /* ================================================================================================= */
 
 const client = new MongoClient(process.env.MONGO_URI);
-let runs;
+let db;
 
-/* ================================================================================================= */
-/*  COLLECTION INITIALIZATION                                                                        */
-/* ================================================================================================= */
-
-const getRunsCollection = async () => {
-  if (!runs) {
-    await client.connect();
-    console.log("Connected to database.");
-    const db = client.db("runners-app");
-    runs = db.collection("runs");
-  }
-  return runs;
+const connectDB = async () => {
+  await client.connect();
+  console.log("Connected to database.");
+  db =  client.db("runners-app");    
 };
+
+const getCollection = (collectionName) => {
+  return db.collection(collectionName)
+}
 
 /* ================================================================================================= */
 /*  DATABASE OPERATIONS                                                                              */
@@ -47,7 +43,7 @@ const getRunByID = async (runID) => {
     throw err;
   }
 
-  const runs = await getRunsCollection();
+  const runs = await getCollection("runs");
 
   const selectedRun = await runs.findOne({
     _id: new ObjectId(runID),
@@ -61,7 +57,7 @@ const getRunByID = async (runID) => {
 };
 
 const addNewRun = async (runJSON) => {
-  const runs = await getRunsCollection();
+  const runs = await getCollection("runs");
 
   const result = await runs.insertOne(runJSON);
   if (!result.acknowledged) {
@@ -78,8 +74,7 @@ const addNewRun = async (runJSON) => {
 /* ================================================================================================= */
 
 module.exports = {
-  client,
-  getRunsCollection,
+  connectDB,
   getRunByID,
   addNewRun,
 };
