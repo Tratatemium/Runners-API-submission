@@ -46,7 +46,7 @@ const getRunByID = async (runID) => {
   const runs = await getCollection("runs");
 
   const selectedRun = await runs.findOne({
-    _id: new ObjectId(runID),
+    _id: ObjectId.createFromHexString(runID),
   });
   if (!selectedRun) {
     const err = new Error(`No run with ID ${runID} found!`);
